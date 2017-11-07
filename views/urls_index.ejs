@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>TinyApp</title>
+    </head>
+    <body>
+        <header>
+            <% include partials/_header %>
+        </header>
+        <table>
+            <% for (url in urls) { %>
+            <tr>
+                <td>
+                    <a href="#">Shorten</a> <%= url%> <%= urls[url] %>
+                </td>
+            </tr>
+            <% } %>
+        </table>
+    </body>
+</html>
