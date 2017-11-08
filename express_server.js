@@ -2,16 +2,19 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 
 // use ejs
 app.set("view engine", "ejs");
 // set up body-parser
 app.use(bodyParser.urlencoded({extended: true}));
+// set up cookie-parser
+app.use(cookieParser())
 
 // Start the server
 const PORT = process.env.PORT || 5000; // default port 8080
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`TinyApp listening on port ${PORT}!`);
 });
 
 // generate a random 6-digit string
@@ -37,7 +40,7 @@ app.get("/", (req, res) => {
 
 // Read
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
   res.render("urls_index", templateVars);
 });
 
@@ -49,11 +52,12 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let templateVars = { username: req.cookies["username"] };
+  res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { urls: urlDatabase, shortURL: req.params.id };
+  let templateVars = { urls: urlDatabase, shortURL: req.params.id, username: req.cookies["username"] };
   res.render("urls_show", templateVars);
 });
 
@@ -74,4 +78,14 @@ app.get("/u/:shortURL", (req, res) => {
   console.log(req.params.id);
   let longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
+});
+
+app.post("/login", (req, res) => {
+  res.cookie("username", req.body.username);
+  res.redirect("/urls");
+});
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("username");
+  res.redirect("/urls");
 });
