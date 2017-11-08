@@ -11,8 +11,9 @@
             <% for (const url in urls) { %>
             <tr>
                 <td>
-                    <a href="#">Shorten</a> <%= url%> <%= urls[url] %>
                     <form class="form-control" action="/urls/<%= url %>/delete" method="post">
+                        <%= url %> -> <%= urls[url] %>
+                        <a class="btn btn-primary" href="/urls/<%= url %>">Edit</a>
                         <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
                 </td>
