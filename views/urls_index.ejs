@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
-        <title>TinyApp</title>
+        <% include partials/_head %>
     </head>
     <body>
         <header>
@@ -13,6 +12,9 @@
             <tr>
                 <td>
                     <a href="#">Shorten</a> <%= url%> <%= urls[url] %>
+                    <form class="form-control" action="/urls/<%= url %>/delete" method="post">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
                 </td>
             </tr>
             <% } %>
