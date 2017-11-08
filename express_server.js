@@ -35,15 +35,16 @@ app.get("/", (req, res) => {
   res.redirect("/urls");
 });
 
+// Read
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
+// Create
 app.post("/urls", (req, res) => {
   let short = generateRandomString();
   urlDatabase[short] = req.body.longURL;
-  console.log(urlDatabase);  // debug statement to see POST parameters
   res.send("OK");         // Respond with 'Ok' (we will replace this)
 });
 
@@ -56,10 +57,17 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+// Update
+app.post("/urls/:id/update", (req, res) => {
+  urlDatabase[req.params.id] = req.body.update;
+  // console.log(req.body.update);
+  res.redirect("/urls");
+})
+
+// Destroy
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
-  let templateVars = { urls: urlDatabase };
-  res.render("urls_index", templateVars);
+  res.redirect("/urls");
 });
 
 app.get("/u/:shortURL", (req, res) => {

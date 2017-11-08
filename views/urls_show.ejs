@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
-        <title>TinyApp</title>
+        <% include partials/_head %>
     </head>
     <body>
         <header>
             <% include partials/_header %>
         </header>
-        <%= shortURL %>
-        <%= urls[shortURL] %>
+        <h1>ShortURL: <strong><%= shortURL %></strong></h1>
+        <form class="form-group" action="/urls/<%= shortURL %>/update" method="post">
+            <input type="text" name="update" value="http://">
+            <button type="submit" class="btn btn-primary">Sumbit</button>
+        </form>
     </body>
 </html>
