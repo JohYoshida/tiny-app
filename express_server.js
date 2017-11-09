@@ -17,18 +17,6 @@ app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
 });
 
-// generate a random 6-digit string
-function generateRandomString() {
-  let string = "";
-  const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-                   "abcdefghijklmnopqrstuvwxyz" +
-                   "01232456789";
-  for (var i = 0; i < 6; i++) {
-    string += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return string;
-}
-
 // mimic a database
 const urlDatabase = {
   "b2xVn2": {
@@ -44,12 +32,12 @@ const urlDatabase = {
   "a0Iul2": {
     id: "a0Iul2",
     longURL: "http://www.lighthouselabs.ca",
-    userID: "test"
+    userID: "userRandomID"
   },
   "XrRsgr": {
     id: "XrRsgr",
     longURL: "http://www.lighthouselabs.ca",
-    userID: "test"
+    userID: "userRandomID"
   }
 };
 
@@ -58,7 +46,7 @@ const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur"
+    password: "test"
   },
  "user2RandomID": {
     id: "user2RandomID",
@@ -71,6 +59,30 @@ const users = {
     password: "test"
   }
 }
+
+// generate a random 6-digit string
+function generateRandomString() {
+  let string = "";
+  const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+                   "abcdefghijklmnopqrstuvwxyz" +
+                   "01232456789";
+  for (var i = 0; i < 6; i++) {
+    string += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return string;
+}
+
+// return a subset of the urlDatabase that belongs to user with id
+function urlsForUser(id) {
+  const filteredDatabase = {};
+  for (let url in urlDatabase) {
+    if (urlDatabase[url].userID === id) {
+      filteredDatabase[url] = urlDatabase[url];
+    }
+  }
+  return filteredDatabase;
+}
+console.log(urlsForUser("test"));
 
 // APP LOGIC
 
