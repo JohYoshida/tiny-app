@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const bcrypt = require("bcrypt");
 
 // use ejs
 app.set("view engine", "ejs");
@@ -46,7 +47,7 @@ const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "test"
+    password: bcrypt.hashSync("test", 10)
   },
  "user2RandomID": {
     id: "user2RandomID",
@@ -56,7 +57,7 @@ const users = {
   "test": {
     id: "test",
     email: "test@test.com",
-    password: "test"
+    password: bcrypt.hashSync("test", 10)
   }
 };
 
@@ -161,16 +162,21 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
+  let error = false;
   for (let user in users) {
     if (users[user].email === req.body.email) {
-      if (users[user].password === req.body.password) {
+      if (bcrypt.compareSync(req.body.password, users[user].password)) {
         res.cookie("user_id", users[user].id);
         res.redirect("/");
+      } else {
+        error = true;
       }
     }
   }
-  res.status(403);
-  res.send("Error 403 Forbidden: User with that email or password can't be found.");
+  if (error) {
+    res.status(403);
+    res.send("Error 403 Forbidden: User with that email or password can't be found.");
+  }
 });
 
 app.post("/logout", (req, res) => {
@@ -195,9 +201,10 @@ app.post("/register", (req, res) => {
     }
   }
   let id = generateRandomString();
+  const hashedPass = bcrypt.hashSync(req.body.password, 10);
   users[id] = { id: id,
                 email: req.body.email,
-                password: req.body.password
+                password: hashedPass
               };
   res.cookie("user_id", id);
   res.redirect("/urls");
