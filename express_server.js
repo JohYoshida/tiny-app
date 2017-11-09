@@ -31,12 +31,26 @@ function generateRandomString() {
 
 // mimic a database
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
-  "a0Iul2": "http://www.lighthouselabs.ca",
-  "XrRsgr": "http://www.google.com",
-  "fuTr8w": "http://www.lighthouselabs.ca",
-  "jzrvHp": "http://www.google.com"
+  "b2xVn2": {
+    id: "b2xVn2",
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "abcdefg"
+  },
+  "9sm5xK": {
+    id: "9sm5xK",
+    longURL: "http://www.google.ca",
+    userID: "abcdefg"
+  },
+  "a0Iul2": {
+    id: "a0Iul2",
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "abcdefg"
+  },
+  "XrRsgr": {
+    id: "XrRsgr",
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "abcdefg"
+  }
 };
 
 // store user data
@@ -97,7 +111,7 @@ app.get("/urls/:id", (req, res) => {
 
 // Update
 app.post("/urls/:id/update", (req, res) => {
-  urlDatabase[req.params.id] = req.body.update;
+  urlDatabase[req.params.id].longURL = req.body.update;
   res.redirect("/urls");
 });
 
