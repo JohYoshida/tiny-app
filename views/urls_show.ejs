@@ -22,10 +22,15 @@
                         </form>
                     </div>
                 </div>
-        <% } else {%>
+        <% } else if (!user){%>
             <div class="alert alert-warning">
                 <h1>You are not logged in!</h1>
                 <p><a href="/login">Login</a> or <a href="/register">Register</a> to continue</p>
+            </div>
+        <% } else { %>
+            <div class="alert alert-warning">
+                <h1>That TinyURL doesn't belong to you!</h1>
+                <p>... but <a href="/urls">these ones</a> do</p>
             </div>
         <% } %>
         </div>
