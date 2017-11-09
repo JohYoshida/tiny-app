@@ -34,22 +34,22 @@ const urlDatabase = {
   "b2xVn2": {
     id: "b2xVn2",
     longURL: "http://www.lighthouselabs.ca",
-    userID: "abcdefg"
+    userID: "test"
   },
   "9sm5xK": {
     id: "9sm5xK",
     longURL: "http://www.google.ca",
-    userID: "abcdefg"
+    userID: "test"
   },
   "a0Iul2": {
     id: "a0Iul2",
     longURL: "http://www.lighthouselabs.ca",
-    userID: "abcdefg"
+    userID: "test"
   },
   "XrRsgr": {
     id: "XrRsgr",
     longURL: "http://www.lighthouselabs.ca",
-    userID: "abcdefg"
+    userID: "test"
   }
 };
 
@@ -65,8 +65,8 @@ const users = {
     email: "user2@example.com",
     password: "dishwasher-funk"
   },
-  "abcdefg": {
-    id: "abcdefg",
+  "test": {
+    id: "test",
     email: "test@test.com",
     password: "test"
   }

@@ -14,6 +14,7 @@
             <div class="card">
                 <div class="card-block">
                     <h1>ShortURL: <strong><%= shortURL %></strong></h1>
+                    <p>Created by <%= urls[shortURL].userID %></p>
                     <form class="form-group" action="/urls/<%= shortURL %>/update" method="post">
                         <input type="text" class="form-control" name="update" value="http://">
                         <button type="submit" class="btn btn-primary">Sumbit</button>

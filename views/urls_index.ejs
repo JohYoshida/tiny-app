@@ -20,12 +20,16 @@
                             <h4 class="card-title"><%= url %></h4>
                             <h6 class="card-subtitle"><a href="/u/<%= url %>"><%= urls[url].longURL %></a></h6>
                             <h6class="card-subtitle text-muted">created by <%= urls[url].userID %></h6>
-                            <div class="card-block">
-                                <form action="/urls/<%= url %>/delete" method="post">
-                                    <a class="btn btn-primary" href="/urls/<%= url %>">Edit</a>
-                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                </form>
-                            </div>
+                            <% if (user) { %>
+                                <% if (user.id === urls[url].userID) { %>
+                                <div class="card-block">
+                                    <form action="/urls/<%= url %>/delete" method="post">
+                                        <a class="btn btn-primary" href="/urls/<%= url %>">Edit</a>
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                                <% } %>
+                            <% } %>
                         </div>
                     </div>
                 </div>
