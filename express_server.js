@@ -162,16 +162,21 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
+  let error = false;
   for (let user in users) {
     if (users[user].email === req.body.email) {
       if (bcrypt.compareSync(req.body.password, users[user].password)) {
         res.cookie("user_id", users[user].id);
         res.redirect("/");
+      } else {
+        error = true;
       }
     }
   }
-  res.status(403);
-  res.send("Error 403 Forbidden: User with that email or password can't be found.");
+  if (error) {
+    res.status(403);
+    res.send("Error 403 Forbidden: User with that email or password can't be found.");
+  }
 });
 
 app.post("/logout", (req, res) => {
