@@ -39,6 +39,25 @@ const urlDatabase = {
   "jzrvHp": "http://www.google.com"
 };
 
+// store user data
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  },
+  "abcdefg": {
+    id: "abcdefg",
+    email: "test@test.com",
+    password: "test"
+  }
+}
+
 // APP LOGIC
 
 app.get("/", (req, res) => {
@@ -48,7 +67,7 @@ app.get("/", (req, res) => {
 // Read
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase,
-                       username: req.cookies["username"]
+                       user: users[req.cookies["user_id"]]
                      };
   res.render("urls_index", templateVars);
 });
@@ -61,14 +80,14 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  let templateVars = { username: req.cookies["username"] };
+  let templateVars = { user: users[req.cookies["user_id"]] };
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
   let templateVars = { urls: urlDatabase,
                        shortURL: req.params.id,
-                       username: req.cookies["username"]
+                       user: users[req.cookies["user_id"]]
                      };
   res.render("urls_show", templateVars);
 });
@@ -90,12 +109,50 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+app.get("/login", (req, res) => {
+  templateVars = { user: users[req.cookies["user_id"]] };
+  res.render("login", templateVars);
+});
+
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username);
-  res.redirect("/urls");
+  for (let user in users) {
+    if (users[user].email === req.body.email) {
+      if (users[user].password === req.body.password) {
+        res.cookie("user_id", users[user].id);
+        res.redirect("/");
+      }
+    }
+  }
+  res.status(403);
+  res.send("Error 403 Forbidden: User with that email or password can't be found.")
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
+  res.redirect("/urls");
+});
+
+app.get("/register", (req, res) => {
+  let templateVars = { user: users[req.cookies["user_id"]] };
+  res.render("register", templateVars);
+});
+
+app.post("/register", (req, res) => {
+  if (!req.body.email || !req.body.password) {
+    res.status(400);
+    res.send("Error 400: Email or password field is empty");
+  }
+  for (let user in users) {
+    if (req.body.email === users[user].email) {
+      res.status(400);
+      res.send("Error 400: That email is already registered");
+    }
+  }
+  let id = generateRandomString();
+  users[id] = { id: id,
+                email: req.body.email,
+                password: req.body.password
+              };
+  res.cookie("user_id", id);
   res.redirect("/urls");
 });

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
     <head>
         <% include partials/_head %>
     </head>
@@ -8,19 +8,21 @@
             <% include partials/_header %>
         </header>
         <div class="jumbotron">
-            <h1>Create a new TinyURL</h1>
+            <h1>Login</h1>
+            <p class="lead">Login to an existing user account</p>
+            <p>Need an account? <a href="/register">Register</a></p>
         </div>
         <div class="container">
             <div class="card">
                 <div class="card-block">
-                    <form class="form-inline "action="/urls" method="POST">
-                        <label for="longURL">Enter a URL: </label>
-                        <input class="form-control" id="longURL" type="text" name="longURL" placeholder="http://" value="http://">
+                    <form class="form-inline" action="/login" method="post">
+                        <label for="email">Email:</label>
+                        <input class="form-control" type="email" name="email" placeholder="example@email.com">
+                        <label for="password">Password:</label>
+                        <input class="form-control" type="password" name="password">
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
-
                 </div>
-
             </div>
         </div>
         <footer>

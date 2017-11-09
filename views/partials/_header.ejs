@@ -1,4 +1,4 @@
-<nav class="navbar fixed-top navbar-toggleable-md navbar-inverse bg-primary">
+<nav class="navbar sticky-top navbar-toggleable-md navbar-inverse bg-primary">
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="sr-only">Toggle navigation</span>
         <span class="navbar-toggler-icon"></span>
@@ -11,16 +11,15 @@
             </li>
         </ul>
 
-        <% if (username) { %>
-        <span class="navbar-text nav-item"><%= username %> is logged in</span>
+
+        <% if (user) { %>
+        <span class="navbar-text nav-item"><%= user.email %> is logged in</span>
         <form class="form-inline" action="/logout" method="post">
             <button type="submit" class="btn btn-outline-warning">Logout</button>
         </form>
-        <% } else { %>
-        <form class="form-inline my-2 my-lg-0" action="/login" method="post">
-            <input type="text" class="form-control mr-sm-2" name="username" placeholder="username">
-            <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Login</button>
-        </form>
+        <% } else {%>
+            <button type="button" class="btn btn-warning"><a href="/login">Login</a></button>
+            <button type="button" class="btn btn-success"><a href="/register">Register</a></button>
         <% } %>
     </div>
 </nav>
