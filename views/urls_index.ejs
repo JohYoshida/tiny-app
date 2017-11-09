@@ -7,18 +7,32 @@
         <header>
             <% include partials/_header %>
         </header>
-        <table>
+        <div class="jumbotron">
+            <h1>TinyURLs</h1>
+            <p class="lead">Make URLs tiny with TinyApp</p>
+        </div>
+        <div class="container">
+            <div class="row">
             <% for (const url in urls) { %>
-            <tr>
-                <td>
-                    <form class="form-control" action="/urls/<%= url %>/delete" method="post">
-                        <%= url %> -> <%= urls[url] %>
-                        <a class="btn btn-primary" href="/urls/<%= url %>">Edit</a>
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                </td>
-            </tr>
+                <div class="col-sm-6">
+                    <div class="card text-center">
+                        <div class="card-block">
+                            <h4 class="card-title"><%= url %></h4>
+                            <h6 class="card-subtitle text-muted"><a href="/u/<%= url %>"><%= urls[url] %></a></h6>
+                            <div class="card-block">
+                                <form action="/urls/<%= url %>/delete" method="post">
+                                    <a class="btn btn-primary" href="/urls/<%= url %>">Edit</a>
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             <% } %>
-        </table>
+            </div>
+        </div>
+        <footer>
+            <% include partials/_footer %>
+        </footer>
     </body>
 </html>

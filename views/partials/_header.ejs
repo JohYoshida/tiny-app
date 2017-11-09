@@ -1,26 +1,26 @@
-<nav class="navbar navbar-inverse bg-primary">
+<nav class="navbar fixed-top navbar-toggleable-md navbar-inverse bg-primary">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="navbar-toggler-icon"></span>
+    </button>
     <a class="navbar-brand" href="/">TinyApp</a>
-    <ul class="nav navbar-nav">
-        <li class="nav-item">
-            <a class="nav-link" href="/">Home</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/urls">Index</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/urls/new">Shorten new URL</a>
-        </li>
-    </ul>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/urls/new">Make a new TinyURL</a>
+            </li>
+        </ul>
 
-    <% if (username === undefined) { %>
-    <form class="form-inline" action="/login" method="post">
-        <input type="text" class="form-control" name="username" placeholder="username">
-        <button type="submit" class="btn btn-secondary">Login</button>
-    </form>
-    <% } else { %>
-    <span class="nav"><%= username %> is logged in.</span>
-    <form class="form-inline" action="/logout" method="post">
-        <button type="submit" class="btn btn-warning">Logout</button>
-    </form>
-    <% } %>
+        <% if (username) { %>
+        <span class="navbar-text nav-item"><%= username %> is logged in</span>
+        <form class="form-inline" action="/logout" method="post">
+            <button type="submit" class="btn btn-outline-warning">Logout</button>
+        </form>
+        <% } else { %>
+        <form class="form-inline my-2 my-lg-0" action="/login" method="post">
+            <input type="text" class="form-control mr-sm-2" name="username" placeholder="username">
+            <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Login</button>
+        </form>
+        <% } %>
+    </div>
 </nav>
