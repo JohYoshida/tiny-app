@@ -9,10 +9,10 @@ app.set("view engine", "ejs");
 // set up body-parser
 app.use(bodyParser.urlencoded({extended: true}));
 // set up cookie-parser
-app.use(cookieParser())
+app.use(cookieParser());
 
 // Start the server
-const PORT = process.env.PORT || 5000; // default port 8080
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
 });
@@ -77,7 +77,7 @@ app.get("/urls/:id", (req, res) => {
 app.post("/urls/:id/update", (req, res) => {
   urlDatabase[req.params.id] = req.body.update;
   res.redirect("/urls");
-})
+});
 
 // Destroy
 app.post("/urls/:id/delete", (req, res) => {
