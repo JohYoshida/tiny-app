@@ -47,7 +47,7 @@ const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "test"
+    password: bcrypt.hashSync("test", 10)
   },
  "user2RandomID": {
     id: "user2RandomID",
@@ -57,7 +57,7 @@ const users = {
   "test": {
     id: "test",
     email: "test@test.com",
-    password: "test"
+    password: bcrypt.hashSync("test", 10)
   }
 };
 
@@ -164,7 +164,7 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   for (let user in users) {
     if (users[user].email === req.body.email) {
-      if (users[user].password === req.body.password) {
+      if (bcrypt.compareSync(req.body.password, users[user].password)) {
         res.cookie("user_id", users[user].id);
         res.redirect("/");
       }
