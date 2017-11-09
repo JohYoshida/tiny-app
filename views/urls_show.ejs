@@ -11,15 +11,23 @@
             <h1>Edit your TinyURL</h1>
         </div>
         <div class="container">
-            <div class="card">
-                <div class="card-block">
-                    <h1>ShortURL: <strong><%= shortURL %></strong></h1>
-                    <form class="form-group" action="/urls/<%= shortURL %>/update" method="post">
-                        <input type="text" class="form-control" name="update" value="http://">
-                        <button type="submit" class="btn btn-primary">Sumbit</button>
-                    </form>
+        <% if (urls[shortURL].id === user) { %>
+                <div class="card">
+                    <div class="card-block">
+                        <h1>ShortURL: <strong><%= shortURL %></strong></h1>
+                        <p>Created by <%= urls[shortURL].userID %></p>
+                        <form class="form-group" action="/urls/<%= shortURL %>/update" method="post">
+                            <input type="text" class="form-control" name="update" value="http://">
+                            <button type="submit" class="btn btn-primary">Sumbit</button>
+                        </form>
+                    </div>
                 </div>
+        <% } else {%>
+            <div class="alert alert-warning">
+                <h1>You are not logged in!</h1>
+                <p><a href="/login">Login</a> or <a href="/register">Register</a> to continue</p>
             </div>
+        <% } %>
         </div>
         <footer>
             <% include partials/_footer %>
