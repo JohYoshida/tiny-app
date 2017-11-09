@@ -111,6 +111,12 @@ app.get("/urls/:id", (req, res) => {
 
 // Update
 app.post("/urls/:id/update", (req, res) => {
+  let user = users[req.cookies["user_id"]];
+  let creator = urlDatabase[req.params.id].userID;
+  if (!user || user.id !== creator) {
+    res.status(403);
+    res.send("Error 403 Forbidden: Only the creator can update this TinyURL");
+  }
   urlDatabase[req.params.id].longURL = req.body.update;
   res.redirect("/urls");
 });
