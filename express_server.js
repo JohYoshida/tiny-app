@@ -58,7 +58,7 @@ const users = {
     email: "test@test.com",
     password: "test"
   }
-}
+};
 
 // generate a random 6-digit string
 function generateRandomString() {
@@ -82,7 +82,6 @@ function urlsForUser(id) {
   }
   return filteredDatabase;
 }
-console.log(urlsForUser("test"));
 
 // APP LOGIC
 
@@ -92,7 +91,13 @@ app.get("/", (req, res) => {
 
 // Read
 app.get("/urls", (req, res) => {
+  let user = users[req.cookies["user_id"]];
+  let filteredDatabase = {};
+  if (user) {
+    filteredDatabase = urlsForUser(user.id);
+  }
   let templateVars = { urls: urlDatabase,
+                       filteredURLs: filteredDatabase,
                        user: users[req.cookies["user_id"]]
                      };
   res.render("urls_index", templateVars);
@@ -165,7 +170,7 @@ app.post("/login", (req, res) => {
     }
   }
   res.status(403);
-  res.send("Error 403 Forbidden: User with that email or password can't be found.")
+  res.send("Error 403 Forbidden: User with that email or password can't be found.");
 });
 
 app.post("/logout", (req, res) => {
