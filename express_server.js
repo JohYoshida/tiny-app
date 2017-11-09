@@ -123,6 +123,12 @@ app.post("/urls/:id/update", (req, res) => {
 
 // Destroy
 app.post("/urls/:id/delete", (req, res) => {
+  let user = users[req.cookies["user_id"]];
+  let creator = urlDatabase[req.params.id].userID;
+  if (!user || user.id !== creator) {
+    res.status(403);
+    res.send("Error 403 Forbidden: Only the creator can update this TinyURL");
+  }
   delete urlDatabase[req.params.id];
   res.redirect("/urls");
 });
