@@ -29,22 +29,26 @@ const urlDatabase = {
   "b2xVn2": {
     id: "b2xVn2",
     longURL: "http://www.lighthouselabs.ca",
-    userID: "test"
+    userID: "test",
+    visits: 1
   },
   "9sm5xK": {
     id: "9sm5xK",
     longURL: "http://www.google.ca",
-    userID: "test"
+    userID: "test",
+    visits: 1
   },
   "a0Iul2": {
     id: "a0Iul2",
     longURL: "http://www.lighthouselabs.ca",
-    userID: "userRandomID"
+    userID: "userRandomID",
+    visits: 1
   },
   "XrRsgr": {
     id: "XrRsgr",
     longURL: "http://www.lighthouselabs.ca",
-    userID: "userRandomID"
+    userID: "userRandomID",
+    visits: 1
   }
 };
 
@@ -152,6 +156,7 @@ app.get("/u/:shortURL", (req, res) => {
     res.status(404).send("Error 404: That TinyURL doesn't exist.");
   }
   let longURL = urlDatabase[req.params.shortURL].longURL;
+  urlDatabase[req.params.shortURL].visits += 1;
   res.redirect(longURL);
 });
 
@@ -176,7 +181,8 @@ app.post("/urls", (req, res) => {
   // add a new TinyURL to the database
   urlDatabase[URLid] = { id: URLid,
                          longURL: req.body.longURL,
-                         userID: req.session.user_id
+                         userID: req.session.user_id,
+                         visits: 1
                        };
   res.redirect("/urls");
 });
