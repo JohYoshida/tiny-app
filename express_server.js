@@ -1,5 +1,6 @@
 // requirements
 const express = require("express");
+const methodOverride = require("method-override");
 const app = express();
 const bodyParser = require("body-parser");
 const cookieSession = require("cookie-session");
@@ -7,6 +8,8 @@ const bcrypt = require("bcrypt");
 
 // use ejs
 app.set("view engine", "ejs");
+// override with the X-HTTP-Method-Override header in the request
+app.use(methodOverride("_method"));
 // set up body-parser
 app.use(bodyParser.urlencoded({extended: true}));
 // set up cookie-session
@@ -178,7 +181,7 @@ app.post("/urls", (req, res) => {
   res.redirect("/urls");
 });
 
-app.post("/urls/:id/update", (req, res) => {
+app.put("/urls/:id", (req, res) => {
   let user = users[req.session.user_id];
   let creator = urlDatabase[req.params.id].userID;
   // if not logged in or not the creator, send an error
@@ -191,7 +194,7 @@ app.post("/urls/:id/update", (req, res) => {
   }
 });
 
-app.post("/urls/:id/delete", (req, res) => {
+app.delete("/urls/:id", (req, res) => {
   let user = users[req.session.user_id];
   let creator = urlDatabase[req.params.id].userID;
   // if not logged in or not the creator, send an error
