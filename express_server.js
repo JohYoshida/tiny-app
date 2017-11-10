@@ -152,7 +152,7 @@ app.get("/login", (req, res) => {
   if (req.session.user_id) {
     res.redirect("/urls");
   }
-  templateVars = { user: users[req.session.user_id] };
+  let templateVars = constructTemplate(req);
   res.render("login", templateVars);
 });
 
