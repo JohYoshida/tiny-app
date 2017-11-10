@@ -87,6 +87,7 @@ function urlsForUser(id) {
   return filteredDatabase;
 }
 
+// checks whether a given URL id exists in the database
 function verifyURL(id) {
   let exists = false;
   for (let url in urlDatabase) {
@@ -97,6 +98,14 @@ function verifyURL(id) {
   return exists;
 }
 
+// constructs a template object for use in rendering views
+function constructTemplate(req) {
+  let template = { urls: urlDatabase,
+                   user: users[req.session.user_id]
+                 };
+  return template;
+}
+
 
 // APP LOGIC
 
@@ -105,40 +114,39 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let user = users[req.session.user_id];
   let filteredDatabase = {};
+  let templateVars = constructTemplate(req);
+  let user = users[req.session.user_id];
+  // find URLs associated with logged in user
   if (user) {
     filteredDatabase = urlsForUser(user.id);
   }
-  let templateVars = { urls: urlDatabase,
-    filteredURLs: filteredDatabase,
-    user: user
-  };
+  templateVars["filteredURLs"] = filteredDatabase;
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  let templateVars = { user: users[req.session.user_id] };
+  let templateVars = constructTemplate(req);
   if (!templateVars.user) {
     res.redirect("/login");
+  } else {
+    res.render("urls_new", templateVars);
   }
-  res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { urls: urlDatabase,
-                       shortURL: req.params.id,
-                       user: users[req.session.user_id]
-                     };
+  let templateVars = constructTemplate(req);
+  templateVars["shortURL"] = req.params.id;
   if (!verifyURL(req.params.id)) {
-    res.send("Error: That TinyURL doesn't exist.");
+    res.status(404).send("Error 404: That TinyURL doesn't exist.");
+  } else {
+    res.render("urls_show", templateVars);
   }
-  res.render("urls_show", templateVars);
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  if (!verifyURL(req.params.id)) {
-    res.send("Error: That TinyURL doesn't exist.");
+  if (!verifyURL(req.params.shortURL)) {
+    res.status(404).send("Error 404: That TinyURL doesn't exist.");
   }
   let longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
@@ -148,7 +156,7 @@ app.get("/login", (req, res) => {
   if (req.session.user_id) {
     res.redirect("/urls");
   }
-  templateVars = { user: users[req.session.user_id] };
+  let templateVars = constructTemplate(req);
   res.render("login", templateVars);
 });
 
@@ -156,15 +164,14 @@ app.get("/register", (req, res) => {
   if (req.session.user_id) {
     res.redirect("/urls");
   }
-  let templateVars = { user: users[req.session.user_id] };
+  let templateVars = constructTemplate(req);
   res.render("register", templateVars);
 });
 
-
-
 app.post("/urls", (req, res) => {
-  let short = generateRandomString();
-  urlDatabase[short] = { id: short,
+  let URLid = generateRandomString();
+  // add a new TinyURL to the database
+  urlDatabase[URLid] = { id: URLid,
                          longURL: req.body.longURL,
                          userID: req.session.user_id
                        };
@@ -174,21 +181,24 @@ app.post("/urls", (req, res) => {
 app.post("/urls/:id/update", (req, res) => {
   let user = users[req.session.user_id];
   let creator = urlDatabase[req.params.id].userID;
+  // if not logged in or not the creator, send an error
   if (!user || user.id !== creator) {
-    res.status(403);
-    res.send("Error 403 Forbidden: Only the creator can update this TinyURL");
+    res.status(403).send("Error 403 Forbidden: Only the creator can update this TinyURL");
+  } else {
+    // update the TinyURL
+    urlDatabase[req.params.id].longURL = req.body.update;
+    res.redirect("/urls");
   }
-  urlDatabase[req.params.id].longURL = req.body.update;
-  res.redirect("/urls");
 });
 
 app.post("/urls/:id/delete", (req, res) => {
   let user = users[req.session.user_id];
   let creator = urlDatabase[req.params.id].userID;
+  // if not logged in or not the creator, send an error
   if (!user || user.id !== creator) {
-    res.status(403);
-    res.send("Error 403 Forbidden: Only the creator can update this TinyURL");
+    res.status(403).send("Error 403 Forbidden: Only the creator can update this TinyURL");
   }
+  // delete the TinyURL
   delete urlDatabase[req.params.id];
   res.redirect("/urls");
 });
@@ -196,8 +206,11 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post("/login", (req, res) => {
   let error = false;
   for (let user in users) {
+    // compare provided email with users database
     if (users[user].email === req.body.email) {
+      // compare provided password with user password hash
       if (bcrypt.compareSync(req.body.password, users[user].password)) {
+        // log user in and redirect
         req.session.user_id = users[user].id;
         res.redirect("/");
       } else {
@@ -208,33 +221,33 @@ app.post("/login", (req, res) => {
     }
   }
   if (error) {
-    res.status(403);
-    res.send("Error 403 Forbidden: User with that email or password can't be found.");
+    res.status(403).send("Error 403 Forbidden: User with that email or password can't be found.");
   }
 });
 
 app.post("/logout", (req, res) => {
-  req.session.user_id = null;
+  req.session = null;
   res.redirect("/urls");
 });
 
 app.post("/register", (req, res) => {
   if (!req.body.email || !req.body.password) {
-    res.status(400);
-    res.send("Error 400: Email or password field is empty");
+    res.status(400).send("Error 400: Email or password field is empty");
   }
   for (let user in users) {
+    // compare provided email with user database
     if (req.body.email === users[user].email) {
-      res.status(400);
-      res.send("Error 400: That email is already registered");
+      res.status(400).send("Error 400: That email is already registered");
     }
   }
+  // create a user id, hash password, and add user to user database
   let id = generateRandomString();
   const hashedPass = bcrypt.hashSync(req.body.password, 10);
   users[id] = { id: id,
                 email: req.body.email,
                 password: hashedPass
               };
+  // set cookie
   req.session.user_id = id;
   res.redirect("/urls");
 });
