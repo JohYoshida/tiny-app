@@ -90,6 +90,17 @@ function urlsForUser(id) {
   return filteredDatabase;
 }
 
+function verifyURL(id) {
+  let exists = false;
+  for (let url in urlDatabase) {
+    if (urlDatabase[url].id === id) {
+      exists = true;
+    }
+  }
+  return exists;
+}
+
+
 // APP LOGIC
 
 app.get("/", (req, res) => {
@@ -134,7 +145,10 @@ app.get("/urls/:id", (req, res) => {
                        shortURL: req.params.id,
                        user: users[req.session.user_id]
                      };
-                     console.log(templateVars.urls[req.params.id].userID, templateVars.user.id);
+  if (!verifyURL(req.params.id)) {
+    res.send("Error: That TinyURL doesn't exist.");
+  }
+  //  console.log(templateVars.urls[req.params.id].userID, templateVars.user);
   res.render("urls_show", templateVars);
 });
 
@@ -163,6 +177,9 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
+  if (!verifyURL(req.params.id)) {
+    res.send("Error: That TinyURL doesn't exist.");
+  }
   let longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
