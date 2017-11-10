@@ -11,7 +11,7 @@
             <h1>Edit your TinyURL</h1>
         </div>
         <div class="container">
-        <% if (urls[shortURL].id === user) { %>
+        <% if (urls[shortURL].userID === user.id) { %>
                 <div class="card">
                     <div class="card-block">
                         <h1>ShortURL: <strong><%= shortURL %></strong></h1>
