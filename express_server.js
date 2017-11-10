@@ -12,10 +12,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 // set up cookie-session
 app.use(cookieSession({
   name: "session",
-  keys: ["secret"],
-
-  // cookie options
-  maxAge: 24 * 60 * 1000 // 24 hours
+  keys: ["secret"]
 }));
 
 // Start the server
@@ -55,7 +52,7 @@ const users = {
     email: "user@example.com",
     password: bcrypt.hashSync("test", 10)
   },
- "user2RandomID": {
+  "user2RandomID": {
     id: "user2RandomID",
     email: "user2@example.com",
     password: "dishwasher-funk"
@@ -108,15 +105,15 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase,
-    filteredURLs: filteredDatabase,
-    user: users[req.session.user_id]
-  };
   let user = users[req.session.user_id];
   let filteredDatabase = {};
   if (user) {
     filteredDatabase = urlsForUser(user.id);
   }
+  let templateVars = { urls: urlDatabase,
+    filteredURLs: filteredDatabase,
+    user: user
+  };
   res.render("urls_index", templateVars);
 });
 
