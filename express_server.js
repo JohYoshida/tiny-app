@@ -98,6 +98,13 @@ function verifyURL(id) {
   return exists;
 }
 
+function constructTemplate(req) {
+  let template = { urls: urlDatabase,
+                   user: users[req.session.user_id]
+                 };
+  return template;
+}
+
 
 // APP LOGIC
 
