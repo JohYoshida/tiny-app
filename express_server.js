@@ -181,7 +181,6 @@ app.get("/u/:shortURL", (req, res) => {
     // check if logged in user has visited this TinyURL
     if (!isUniqueVisitor(req, req.session.user_id)) {
       urlDatabase[req.params.shortURL].uniques.push(req.session.user_id);
-      console.log(urlDatabase[req.params.shortURL].uniques);
     }
   }
 
