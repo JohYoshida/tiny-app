@@ -118,10 +118,8 @@ app.get("/urls", (req, res) => {
   if (user) {
     filteredDatabase = urlsForUser(user.id);
   }
-  let templateVars = { urls: urlDatabase,
-    filteredURLs: filteredDatabase,
-    user: user
-  };
+  let templateVars = constructTemplate(req);
+  templateVars["filteredURLs"] = filteredDatabase;
   res.render("urls_index", templateVars);
 });
 
