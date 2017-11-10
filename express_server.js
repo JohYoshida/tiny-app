@@ -160,7 +160,7 @@ app.get("/register", (req, res) => {
   if (req.session.user_id) {
     res.redirect("/urls");
   }
-  let templateVars = { user: users[req.session.user_id] };
+  let templateVars = constructTemplate(req);
   res.render("register", templateVars);
 });
 
