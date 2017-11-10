@@ -124,7 +124,7 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  let templateVars = { user: users[req.session.user_id] };
+  let templateVars = constructTemplate(req);
   if (!templateVars.user) {
     res.redirect("/login");
   }
@@ -170,7 +170,7 @@ app.get("/register", (req, res) => {
 
 app.post("/urls", (req, res) => {
   let URLid = generateRandomString();
-  urlDatabase[short] = { id: URLid,
+  urlDatabase[URLid] = { id: URLid,
                          longURL: req.body.longURL,
                          userID: req.session.user_id
                        };
