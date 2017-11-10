@@ -135,14 +135,14 @@ app.get("/urls/:id", (req, res) => {
   let templateVars = constructTemplate(req);
   templateVars["shortURL"] = req.params.id;
   if (!verifyURL(req.params.id)) {
-    res.send("Error: That TinyURL doesn't exist.");
+    res.status(404).send("Error 404: That TinyURL doesn't exist.");
   }
   res.render("urls_show", templateVars);
 });
 
 app.get("/u/:shortURL", (req, res) => {
   if (!verifyURL(req.params.id)) {
-    res.send("Error: That TinyURL doesn't exist.");
+    resstatus(404).send("Error 404: That TinyURL doesn't exist.");
   }
   let longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
@@ -164,8 +164,6 @@ app.get("/register", (req, res) => {
   res.render("register", templateVars);
 });
 
-
-
 app.post("/urls", (req, res) => {
   let URLid = generateRandomString();
   urlDatabase[URLid] = { id: URLid,
@@ -179,8 +177,7 @@ app.post("/urls/:id/update", (req, res) => {
   let user = users[req.session.user_id];
   let creator = urlDatabase[req.params.id].userID;
   if (!user || user.id !== creator) {
-    res.status(403);
-    res.send("Error 403 Forbidden: Only the creator can update this TinyURL");
+    res.status(403).send("Error 403 Forbidden: Only the creator can update this TinyURL");
   }
   urlDatabase[req.params.id].longURL = req.body.update;
   res.redirect("/urls");
@@ -190,8 +187,7 @@ app.post("/urls/:id/delete", (req, res) => {
   let user = users[req.session.user_id];
   let creator = urlDatabase[req.params.id].userID;
   if (!user || user.id !== creator) {
-    res.status(403);
-    res.send("Error 403 Forbidden: Only the creator can update this TinyURL");
+    res.status(403).send("Error 403 Forbidden: Only the creator can update this TinyURL");
   }
   delete urlDatabase[req.params.id];
   res.redirect("/urls");
@@ -212,8 +208,7 @@ app.post("/login", (req, res) => {
     }
   }
   if (error) {
-    res.status(403);
-    res.send("Error 403 Forbidden: User with that email or password can't be found.");
+    res.status(403).send("Error 403 Forbidden: User with that email or password can't be found.");
   }
 });
 
@@ -224,13 +219,11 @@ app.post("/logout", (req, res) => {
 
 app.post("/register", (req, res) => {
   if (!req.body.email || !req.body.password) {
-    res.status(400);
-    res.send("Error 400: Email or password field is empty");
+    res.status(400).send("Error 400: Email or password field is empty");
   }
   for (let user in users) {
     if (req.body.email === users[user].email) {
-      res.status(400);
-      res.send("Error 400: That email is already registered");
+      res.status(400).send("Error 400: That email is already registered");
     }
   }
   let id = generateRandomString();
