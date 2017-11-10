@@ -87,6 +87,7 @@ function urlsForUser(id) {
   return filteredDatabase;
 }
 
+// checks whether a given URL id exists in the database
 function verifyURL(id) {
   let exists = false;
   for (let url in urlDatabase) {
@@ -105,8 +106,8 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let user = users[req.session.user_id];
   let filteredDatabase = {};
+  let user = users[req.session.user_id];
   if (user) {
     filteredDatabase = urlsForUser(user.id);
   }
@@ -163,8 +164,8 @@ app.get("/register", (req, res) => {
 
 
 app.post("/urls", (req, res) => {
-  let short = generateRandomString();
-  urlDatabase[short] = { id: short,
+  let URLid = generateRandomString();
+  urlDatabase[short] = { id: URLid,
                          longURL: req.body.longURL,
                          userID: req.session.user_id
                        };
@@ -214,7 +215,7 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  req.session.user_id = null;
+  req.session = null;
   res.redirect("/urls");
 });
 
