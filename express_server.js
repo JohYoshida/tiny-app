@@ -107,29 +107,17 @@ app.get("/", (req, res) => {
   res.redirect("/urls");
 });
 
-// Read
 app.get("/urls", (req, res) => {
+  let templateVars = { urls: urlDatabase,
+    filteredURLs: filteredDatabase,
+    user: users[req.session.user_id]
+  };
   let user = users[req.session.user_id];
   let filteredDatabase = {};
   if (user) {
     filteredDatabase = urlsForUser(user.id);
   }
-  let templateVars = { urls: urlDatabase,
-                       filteredURLs: filteredDatabase,
-                       user: users[req.session.user_id]
-                     };
   res.render("urls_index", templateVars);
-});
-
-// Create
-app.post("/urls", (req, res) => {
-  let short = generateRandomString();
-  urlDatabase[short] = { id: short,
-                         longURL: req.body.longURL,
-                         userID: req.session.user_id
-                       }
-  console.log(req.body);
-  res.redirect("/urls");
 });
 
 app.get("/urls/new", (req, res) => {
@@ -148,32 +136,7 @@ app.get("/urls/:id", (req, res) => {
   if (!verifyURL(req.params.id)) {
     res.send("Error: That TinyURL doesn't exist.");
   }
-  //  console.log(templateVars.urls[req.params.id].userID, templateVars.user);
   res.render("urls_show", templateVars);
-});
-
-// Update
-app.post("/urls/:id/update", (req, res) => {
-  let user = users[req.session.user_id];
-  let creator = urlDatabase[req.params.id].userID;
-  if (!user || user.id !== creator) {
-    res.status(403);
-    res.send("Error 403 Forbidden: Only the creator can update this TinyURL");
-  }
-  urlDatabase[req.params.id].longURL = req.body.update;
-  res.redirect("/urls");
-});
-
-// Destroy
-app.post("/urls/:id/delete", (req, res) => {
-  let user = users[req.session.user_id];
-  let creator = urlDatabase[req.params.id].userID;
-  if (!user || user.id !== creator) {
-    res.status(403);
-    res.send("Error 403 Forbidden: Only the creator can update this TinyURL");
-  }
-  delete urlDatabase[req.params.id];
-  res.redirect("/urls");
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -190,6 +153,47 @@ app.get("/login", (req, res) => {
   }
   templateVars = { user: users[req.session.user_id] };
   res.render("login", templateVars);
+});
+
+app.get("/register", (req, res) => {
+  if (req.session.user_id) {
+    res.redirect("/urls");
+  }
+  let templateVars = { user: users[req.session.user_id] };
+  res.render("register", templateVars);
+});
+
+
+
+app.post("/urls", (req, res) => {
+  let short = generateRandomString();
+  urlDatabase[short] = { id: short,
+                         longURL: req.body.longURL,
+                         userID: req.session.user_id
+                       };
+  res.redirect("/urls");
+});
+
+app.post("/urls/:id/update", (req, res) => {
+  let user = users[req.session.user_id];
+  let creator = urlDatabase[req.params.id].userID;
+  if (!user || user.id !== creator) {
+    res.status(403);
+    res.send("Error 403 Forbidden: Only the creator can update this TinyURL");
+  }
+  urlDatabase[req.params.id].longURL = req.body.update;
+  res.redirect("/urls");
+});
+
+app.post("/urls/:id/delete", (req, res) => {
+  let user = users[req.session.user_id];
+  let creator = urlDatabase[req.params.id].userID;
+  if (!user || user.id !== creator) {
+    res.status(403);
+    res.send("Error 403 Forbidden: Only the creator can update this TinyURL");
+  }
+  delete urlDatabase[req.params.id];
+  res.redirect("/urls");
 });
 
 app.post("/login", (req, res) => {
@@ -215,14 +219,6 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   req.session.user_id = null;
   res.redirect("/urls");
-});
-
-app.get("/register", (req, res) => {
-  if (req.session.user_id) {
-    res.redirect("/urls");
-  }
-  let templateVars = { user: users[req.session.user_id] };
-  res.render("register", templateVars);
 });
 
 app.post("/register", (req, res) => {
