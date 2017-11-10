@@ -170,6 +170,7 @@ app.get("/register", (req, res) => {
 
 app.post("/urls", (req, res) => {
   let URLid = generateRandomString();
+  // add a new TinyURL to the database
   urlDatabase[URLid] = { id: URLid,
                          longURL: req.body.longURL,
                          userID: req.session.user_id
@@ -180,19 +181,24 @@ app.post("/urls", (req, res) => {
 app.post("/urls/:id/update", (req, res) => {
   let user = users[req.session.user_id];
   let creator = urlDatabase[req.params.id].userID;
+  // if not logged in or not the creator, send an error
   if (!user || user.id !== creator) {
     res.status(403).send("Error 403 Forbidden: Only the creator can update this TinyURL");
+  } else {
+    // update the TinyURL
+    urlDatabase[req.params.id].longURL = req.body.update;
+    res.redirect("/urls");
   }
-  urlDatabase[req.params.id].longURL = req.body.update;
-  res.redirect("/urls");
 });
 
 app.post("/urls/:id/delete", (req, res) => {
   let user = users[req.session.user_id];
   let creator = urlDatabase[req.params.id].userID;
+  // if not logged in or not the creator, send an error
   if (!user || user.id !== creator) {
     res.status(403).send("Error 403 Forbidden: Only the creator can update this TinyURL");
   }
+  // delete the TinyURL
   delete urlDatabase[req.params.id];
   res.redirect("/urls");
 });
@@ -200,8 +206,11 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post("/login", (req, res) => {
   let error = false;
   for (let user in users) {
+    // compare provided email with users database
     if (users[user].email === req.body.email) {
+      // compare provided password with user password hash
       if (bcrypt.compareSync(req.body.password, users[user].password)) {
+        // log user in and redirect
         req.session.user_id = users[user].id;
         res.redirect("/");
       } else {
@@ -226,16 +235,19 @@ app.post("/register", (req, res) => {
     res.status(400).send("Error 400: Email or password field is empty");
   }
   for (let user in users) {
+    // compare provided email with user database
     if (req.body.email === users[user].email) {
       res.status(400).send("Error 400: That email is already registered");
     }
   }
+  // create a user id, hash password, and add user to user database
   let id = generateRandomString();
   const hashedPass = bcrypt.hashSync(req.body.password, 10);
   users[id] = { id: id,
                 email: req.body.email,
                 password: hashedPass
               };
+  // set cookie
   req.session.user_id = id;
   res.redirect("/urls");
 });
