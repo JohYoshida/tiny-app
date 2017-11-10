@@ -1,5 +1,6 @@
 // requirements
 const express = require("express");
+const methodOverride = require("method-override");
 const app = express();
 const bodyParser = require("body-parser");
 const cookieSession = require("cookie-session");
@@ -7,6 +8,8 @@ const bcrypt = require("bcrypt");
 
 // use ejs
 app.set("view engine", "ejs");
+// override with the X-HTTP-Method-Override header in the request
+app.use(methodOverride('X-HTTP-Method-Override'));
 // set up body-parser
 app.use(bodyParser.urlencoded({extended: true}));
 // set up cookie-session
