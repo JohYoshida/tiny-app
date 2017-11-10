@@ -98,6 +98,7 @@ function verifyURL(id) {
   return exists;
 }
 
+// constructs a template object for use in rendering views
 function constructTemplate(req) {
   let template = { urls: urlDatabase,
                    user: users[req.session.user_id]
@@ -114,11 +115,12 @@ app.get("/", (req, res) => {
 
 app.get("/urls", (req, res) => {
   let filteredDatabase = {};
+  let templateVars = constructTemplate(req);
   let user = users[req.session.user_id];
+  // find URLs associated with logged in user
   if (user) {
     filteredDatabase = urlsForUser(user.id);
   }
-  let templateVars = constructTemplate(req);
   templateVars["filteredURLs"] = filteredDatabase;
   res.render("urls_index", templateVars);
 });
@@ -127,8 +129,9 @@ app.get("/urls/new", (req, res) => {
   let templateVars = constructTemplate(req);
   if (!templateVars.user) {
     res.redirect("/login");
+  } else {
+    res.render("urls_new", templateVars);
   }
-  res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -136,13 +139,14 @@ app.get("/urls/:id", (req, res) => {
   templateVars["shortURL"] = req.params.id;
   if (!verifyURL(req.params.id)) {
     res.status(404).send("Error 404: That TinyURL doesn't exist.");
+  } else {
+    res.render("urls_show", templateVars);
   }
-  res.render("urls_show", templateVars);
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  if (!verifyURL(req.params.id)) {
-    resstatus(404).send("Error 404: That TinyURL doesn't exist.");
+  if (!verifyURL(req.params.shortURL)) {
+    res.status(404).send("Error 404: That TinyURL doesn't exist.");
   }
   let longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
