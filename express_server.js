@@ -132,10 +132,8 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { urls: urlDatabase,
-                       shortURL: req.params.id,
-                       user: users[req.session.user_id]
-                     };
+  let templateVars = constructTemplate(req);
+  templateVars["shortURL"] = req.params.id;
   if (!verifyURL(req.params.id)) {
     res.send("Error: That TinyURL doesn't exist.");
   }
