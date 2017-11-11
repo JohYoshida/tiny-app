@@ -30,28 +30,32 @@ const urlDatabase = {
     id: "b2xVn2",
     longURL: "http://www.lighthouselabs.ca",
     userID: "test",
-    visits: {"test": ["10:30, 2017-10-6"]},
+    visits: 1,
+    visitors: {"test": ["10:30, 2017-10-6"]},
     uniques: ["test"]
   },
   "9sm5xK": {
     id: "9sm5xK",
     longURL: "http://www.google.ca",
     userID: "test",
-    visits: {"test": ["10:30, 2017-10-6"]},
+    visits: 1,
+    visitors: {"test": ["10:30, 2017-10-6"]},
     uniques: ["test"]
   },
   "a0Iul2": {
     id: "a0Iul2",
     longURL: "http://www.lighthouselabs.ca",
     userID: "userRandomID",
-    visits: {"a0Iul2": ["10:30, 2017-10-6"]},
+    visits: 1,
+    visitors: {"a0Iul2": ["10:30, 2017-10-6"]},
     uniques: ["userRandomID"]
   },
   "XrRsgr": {
     id: "XrRsgr",
     longURL: "http://www.lighthouselabs.ca",
     userID: "userRandomID",
-    visits: {"XrRsgr": ["10:30, 2017-10-6"]},
+    visits: 1,
+    visitors: {"XrRsgr": ["10:30, 2017-10-6"]},
     uniques: ["userRandomID"]
   }
 };
@@ -160,9 +164,6 @@ app.get("/urls/:id", (req, res) => {
   if (!verifyURL(req.params.id)) {
     res.status(404).send("Error 404: That TinyURL doesn't exist.");
   } else {
-    // for (let id of (urlDatabase[req.params.id].visits)) {
-    //   console.log(urlDatabase[req.params.id].visits);
-    // }
     res.render("urls_show", templateVars);
   }
 });
@@ -173,23 +174,23 @@ app.get("/u/:shortURL", (req, res) => {
   }
   let longURL = urlDatabase[req.params.shortURL].longURL;
   // increment visit count
-  // urlDatabase[req.params.shortURL].visits += 1;
+  urlDatabase[req.params.shortURL].visits += 1;
   // get time
   let date = new Date().toUTCString();
   // give anonymous users a visitor id
   if (!req.session.user_id) {
     req.session.visitor_id = generateRandomString();
     urlDatabase[req.params.shortURL].uniques.push(req.session.visitor_id);
-    urlDatabase[req.params.shortURL].visits[req.session.visitor_id] = [date];
+    urlDatabase[req.params.shortURL].visitors[req.session.visitor_id] = [date];
   } else {
     // check if logged in user has visited this TinyURL
     if (!isUniqueVisitor(req, req.session.user_id)) {
       urlDatabase[req.params.shortURL].uniques.push(req.session.user_id);
     }
-    if (urlDatabase[req.params.shortURL].visits[req.session.user_id]) {
-      urlDatabase[req.params.shortURL].visits[req.session.user_id].push(date);
+    if (urlDatabase[req.params.shortURL].visitors[req.session.user_id]) {
+      urlDatabase[req.params.shortURL].visitors[req.session.user_id].push(date);
     } else {
-      urlDatabase[req.params.shortURL].visits[req.session.user_id] = [date];
+      urlDatabase[req.params.shortURL].visitors[req.session.user_id] = [date];
     }
   }
 
@@ -221,7 +222,8 @@ app.post("/urls", (req, res) => {
   urlDatabase[URLid] = { id: URLid,
                          longURL: req.body.longURL,
                          userID: req.session.user_id,
-                         visits: {URLid: date},
+                         visits: 1,
+                         visitors: {URLid: date},
                          uniques: [URLid]
                        };
   res.redirect("/urls");
