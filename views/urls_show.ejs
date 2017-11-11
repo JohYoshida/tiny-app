@@ -35,6 +35,7 @@
                 <div class="col-sm-8">
                     <div class="card">
                         <div class="card-block">
+                            <h3>Visitors</h3>
                             <% for (let id in urls[shortURL].visitors) {%>
                                 <p><%= id %>: <%= urls[shortURL].visitors[id] %></p>
                             <% } %>
