@@ -17,19 +17,29 @@
                 <p><a href="/login">Login</a> or <a href="/register">Register</a> to continue</p>
             </div>
         <% } else if (urls[shortURL].userID === user.id){%>
-            <div class="card">
-                <div class="card-block">
-                    <h1>ShortURL: <strong><%= shortURL %></strong></h1>
-                    <p>Created by <%= urls[shortURL].userID %></p>
-                    <p><%= Object.keys(urls[shortURL].visits).length %> visits</p>
-                    <p><%= urls[shortURL].uniques.length %> unique visitors</p>
-                    <% for (let id in urls[shortURL].visits) {%>
-                        <p><%= id %>: <%= urls[shortURL].visits[id] %></p>
-                    <% } %>
-                    <form class="form-group" method="POST" action="/urls/<%= shortURL %>?_method=PUT">
-                        <input type="text" class="form-control" name="update" value="http://">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </form>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="card">
+                        <div class="card-block">
+                            <h1>ShortURL: <strong><%= shortURL %></strong></h1>
+                            <p>Created by <%= urls[shortURL].userID %></p>
+                            <p><%= Object.keys(urls[shortURL].visits).length %> visits</p>
+                            <p><%= urls[shortURL].uniques.length %> unique visitors</p>
+                            <form class="form-group" method="POST" action="/urls/<%= shortURL %>?_method=PUT">
+                                <input type="text" class="form-control" name="update" value="http://">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="card">
+                        <div class="card-block">
+                            <% for (let id in urls[shortURL].visits) {%>
+                                <p><%= id %>: <%= urls[shortURL].visits[id] %></p>
+                            <% } %>
+                        </div>
+                    </div>
                 </div>
             </div>
         <% } else { %>
